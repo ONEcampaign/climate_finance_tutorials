@@ -13,8 +13,9 @@ Before going to the tutorial, you will need to set up your workspace.
 
 To reproduce the analysis, you need python 3.11 or higher. Once you have created your repository, we recommend setting up and activating a new virtual environment to store all the dependencies required for the analysis. 
 
-To install the climate finance, run the below code in your terminal. 
-```pip install climate_finance --upgrade```
+To install the climate finance, run the below code in your terminal.
+
+`pip install climate_finance --upgrade`
 
 From here, you are ready to run the tutorial scripts...
 
