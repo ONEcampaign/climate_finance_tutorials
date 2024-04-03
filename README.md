@@ -18,4 +18,6 @@ To install the climate finance, run the below code in your terminal.
 
 From here, you are ready to run the tutorial scripts...
 
-## 1. Total climate-related flows (ODA and OOFs) by donor, recipient, and reporting methodology.
+## Tutorials
+
+### 1. Total climate-related flows (ODA and OOFs) by donor, recipient, and reporting methodology.
