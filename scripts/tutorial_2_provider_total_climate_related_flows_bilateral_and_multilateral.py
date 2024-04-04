@@ -9,7 +9,9 @@ def one_methodology_bilateral_flows_by_recipient(
     climate_data: ClimateData, flows: str
 ) -> pd.DataFrame:
 
-    climate_data.load_spending_data(methodology="ONE", source="OECD_CRS_ALLOCABLE", flows=flows)
+    climate_data.load_spending_data(
+        methodology="ONE", source="OECD_CRS_ALLOCABLE", flows=flows
+    )
 
     data = climate_data.get_data()
 
