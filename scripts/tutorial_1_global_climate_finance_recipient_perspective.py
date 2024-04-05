@@ -5,6 +5,12 @@ from scripts import config
 set_climate_finance_data_path(config.Paths.raw_data)
 
 
+def filter_for_climate_related_flows(df: pd.DataFrame) -> pd.DataFrame:
+
+    climate_related = ['Mitigation','Adaptation','Cross-cutting','climate_adaptation','climate_mitigation','climate_cross_cutting']
+
+    return df.loc[lambda d: d.indicator.isin(climate_related)]
+
 def load_data_into_dataframe(
     climate_data: ClimateData, methodology: str, flows: str, source: str
 ) -> pd.DataFrame:
@@ -27,6 +33,17 @@ def aggregate_by_year(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def aggregate_by_year_flow_type_and_recipient(df: pd.DataFrame) -> pd.DataFrame:
+    groupby = ["year", "oecd_recipient_code", "flow_code", "flow_name"]
+    columns_to_keep = ["year", "oecd_recipient_code", "flow_code", "flow_name", "value"]
+
+    return (
+        df.groupby(by=groupby, observed=True, as_index=False)
+        .sum("value")
+        .filter(items=columns_to_keep, axis=1)
+    )
+
+
 if __name__ == "__main__":
 
     # The best way to specify the climate finance data you need is to instantiate the
@@ -38,15 +55,15 @@ if __name__ == "__main__":
         recipients=None,  # This takes flows to all recipients
         currency="USD",
         prices="current",
-        #base_year=2022,
+        # base_year=2022,
     )
 
     # You can specify the methodology here. Either ONE or OECD.
-    METHODOLOGY = "ONE"
+    METHODOLOGY = "OECD"
 
     # You can specify the flow type here. The main ones are gross_disbursement and
     # commitments. Use ClimateData.available_flows() to see other available flows.
-    FLOWS = "gross_disbursements"
+    FLOWS = "commitments"
 
     # depending on the methodology and flows, you need to use different sources. This is
     # explained in significant detail in the package documentation. Here, we focus on the
@@ -56,11 +73,16 @@ if __name__ == "__main__":
     # - ONE Commitments: 'OECD_CRDF'
     # - ONE Disbursments: 'OECD_CRDF_CRS_ALLOCABLE'
 
-    SOURCE = "OECD_CRDF_CRS_ALLOCABLE"
+    SOURCE = "OECD_CRS"
 
     full_dataset = load_data_into_dataframe(
         climate_data=climate_data, methodology=METHODOLOGY, flows=FLOWS, source=SOURCE
-    )
+    ).pipe(filter_for_climate_related_flows)
 
     global_climate_finance_annual_total = aggregate_by_year(full_dataset)
-    print(global_climate_finance_annual_total['value'].sum()/1000000000)
+
+    climate_finance_by_recipient_and_flow_type = aggregate_by_year_flow_type_and_recipient(
+        full_dataset
+    )
+
+    print(global_climate_finance_annual_total["value"].sum() / 1000000000)
